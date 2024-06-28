@@ -7,7 +7,8 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 
 function MovableBox({
         itemBox,
-        onResize
+        onResize,
+        onEndDrag
     }: MovableBoxProps) {
     const [initialBounds, setInitialBounds] = useState({
         top: 0,
@@ -27,6 +28,7 @@ function MovableBox({
           collect: (monitor: DragSourceMonitor) => ({
             isDragging: monitor.isDragging(),
           }),
+          end: onEndDrag
         },
         [itemBox]
     );

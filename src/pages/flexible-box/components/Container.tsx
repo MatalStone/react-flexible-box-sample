@@ -6,6 +6,7 @@ import { DraggableBox, DraggedBox } from 'types/flexible-box/common';
 import MovableBox from './MovableBox';
 import { ResizedItemBoxData } from 'types/flexible-box/movable-box';
 import MovableBoxPreview from './MovableBoxPreview';
+import { getPosition } from 'pure-functions/flexible-box/container';
 
 const getSerialNo = indexGenerator(1)
 
@@ -14,47 +15,45 @@ const { width, height } = getBoxSize()
 function Container() {
     const [boxes, setBoxes] = useState([] as DraggedBox[])
     const dropAreaRef = useRef<HTMLDivElement | null>(null)
+    const positionRef = useRef({top: 0, left: 0})
 
-    const rect = dropAreaRef.current == null ? undefined : dropAreaRef.current.getBoundingClientRect()
+    const areaRect = dropAreaRef.current == null ? undefined : dropAreaRef.current.getBoundingClientRect()
 
     const [, dropInitialBox] = useDrop(
         () => ({
           accept: "initialBox",
           drop(item: DraggableBox, monitor) {
             const clientOffset = monitor.getClientOffset();
-            if(clientOffset == null || rect == null){
+            if(clientOffset == null || areaRect == null){
                 return
             }
-            const topPixel = clientOffset.y - rect.top - (height/2)
-            const leftPixel = clientOffset.x - rect.left - (width/2)
+            const topPixel = clientOffset.y - areaRect.top - (height/2)
+            const leftPixel = clientOffset.x - areaRect.left - (width/2)
             const box = {
                 serialNo: getSerialNo(),
                 text: item.text,
                 color: item.color,
-                top: (topPixel / rect.height) * 100,
-                left: (leftPixel / rect.width) * 100,
-                width: (width / rect.width) * 100,
-                height: (height / rect.height) * 100
+                top: (topPixel / areaRect.height) * 100,
+                left: (leftPixel / areaRect.width) * 100,
+                width: (width / areaRect.width) * 100,
+                height: (height / areaRect.height) * 100
             }
             setBoxes([...boxes, box])
           }
         }),
-        [boxes, setBoxes, rect]
+        [boxes, setBoxes, areaRect]
       );
 
     const [, dropMovableBox] = useDrop(
         () => ({
           accept: "movableBox",
-          drop(item: DraggableBox, monitor) {
-            console.log("move")
-          }
         }),
         []
     );
 
-    const { itemType, isDragging, item, differenceOffset } =
+    const { itemType, isDragging, draggingItem, differenceOffset } =
         useDragLayer((monitor) => ({
-            item: monitor.getItem() as DraggedBox,
+            draggingItem: monitor.getItem() as DraggedBox,
             itemType: monitor.getItemType(),
             differenceOffset: monitor.getDifferenceFromInitialOffset(),
             isDragging: monitor.isDragging(),
@@ -63,30 +62,9 @@ function Container() {
     const isMoving = isDragging && itemType === "movableBox"
 
     const position = useMemo(() => {
-        if(differenceOffset == null || rect == null) {
-            return {
-                top: 0,
-                left: 0,
-                width: 0,
-                height: 0
-            }
-        }
-        const widthPixel = rect.width * (item.width / 100)
-        const heightPixel = rect.height * (item.height / 100)
-
-        const initialTopPixel = rect.height * (item.top / 100)
-        const initialLeftPixel = rect.width * (item.left / 100)
-
-        const topPixel = initialTopPixel + differenceOffset.y
-        const leftPixel = initialLeftPixel + differenceOffset.x
-
-        return {
-            top: topPixel,
-            left: leftPixel,
-            width: widthPixel,
-            height: heightPixel
-        }
-    }, [item, differenceOffset, rect])
+        positionRef.current = getPosition(draggingItem, areaRect, differenceOffset)
+        return positionRef.current
+    }, [draggingItem, areaRect, differenceOffset])
       
     return (
     <div
@@ -119,12 +97,19 @@ function Container() {
                             _box
                         ])
                     }}
+                    onEndDrag={(draggedItem) => {
+                        setBoxes([
+                            ...boxes.filter(b => b.serialNo !== draggedItem.serialNo),
+                            { ...draggedItem, ...positionRef.current }
+                        ])
+                        positionRef.current = { top:0, left:0}
+                    }}
                     />
                 ))}
             {isMoving ?
                 <MovableBoxPreview
                     itemBox={
-                        {...item,
+                        {...draggingItem,
                         ...position
                     }} /> : null}
     </div>)

@@ -11,10 +11,10 @@ function MovableBoxPreview({itemBox}: MovableBoxPreviewProps) {
         verticalAlign: "middle",
         textAlign: "center",
         justifyContent: "center",
-        top: itemBox.top,
-        left: itemBox.left,
-        width: itemBox.width,
-        height: itemBox.height,
+        top: `${itemBox.top}%`,
+        left: `${itemBox.left}%`,
+        width: `${itemBox.width}%`,
+        height: `${itemBox.height}%`,
         boxSizing: "border-box",
     }}>
         {itemBox.text}
