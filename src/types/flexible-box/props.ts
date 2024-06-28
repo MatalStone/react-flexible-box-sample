@@ -9,7 +9,8 @@ export interface InitialBoxProps {
 export interface MovableBoxProps {
     itemBox: DraggedBox
     onResize: (box: ResizedItemBoxData) => void
-    onEndDrag: (draggedItem: DraggedBox, monitor: DragSourceMonitor<DraggedBox, unknown>) => void
+    draggingPosition: {top: number, left: number}
+    onEndDrag: (serialNo: number, top: number, left: number) => void
 }
 
 export interface MovableBoxPreviewProps {

@@ -97,12 +97,21 @@ function Container() {
                             _box
                         ])
                     }}
-                    onEndDrag={(draggedItem) => {
+                    draggingPosition={positionRef.current}
+                    onEndDrag={(serialNo, top, left) => {
+                        const targetBox = boxes.find(b => b.serialNo === serialNo)
+                        if(targetBox == null) {
+                            return
+                        }
+                        const _box: DraggedBox = {
+                            ...targetBox,
+                            top,
+                            left
+                        }
                         setBoxes([
-                            ...boxes.filter(b => b.serialNo !== draggedItem.serialNo),
-                            { ...draggedItem, ...positionRef.current }
+                            ...boxes.filter(b => b.serialNo !== serialNo),
+                            _box
                         ])
-                        positionRef.current = { top:0, left:0}
                     }}
                     />
                 ))}
