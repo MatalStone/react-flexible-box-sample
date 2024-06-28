@@ -1,7 +1,7 @@
 import React from 'react'
 import { indexGenerator } from 'pure-functions/common/util';
-import { DraggableBox } from 'types/flexible-box';
-import ItemBoxComponent from './ItemBox'
+import { DraggableBox } from 'types/flexible-box/common';
+import InitialBox from './InitialBox'
 import Container from './Container'
 
 const getSerialNo = indexGenerator(1)
@@ -20,7 +20,7 @@ function Page() {
             height: 40,
         }}>
             {itemBoxes.map(box => (
-                <ItemBoxComponent
+                <InitialBox
                     key={box.serialNo}
                     itemBox={box} />))
             }

@@ -10,8 +10,6 @@ export interface DraggedBox {
     color: string;
     top: number
     left: number
-}
-
-export interface ItemBoxProps{
-    itemBox: DraggableBox
+    width: number
+    height: number
 }

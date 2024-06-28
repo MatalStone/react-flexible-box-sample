@@ -1,12 +1,12 @@
-import { getBoxSize } from 'pure-functions/flexible-box/constant';
 import React from 'react'
+import { getBoxSize } from 'pure-functions/flexible-box/constant';
 import { useDrag } from 'react-dnd';
-import { ItemBoxProps } from 'types/flexible-box'
+import { InitialBoxProps } from 'types/flexible-box/props'
 
 const { width, height } = getBoxSize()
 
-function ItemBoxComponent({itemBox}: ItemBoxProps) {
-    const [collected, drag, dragPreview] = useDrag(
+function InitialBox({itemBox}: InitialBoxProps) {
+    const [_, drag] = useDrag(
         {
           type: "box",
           item: itemBox
@@ -32,4 +32,4 @@ function ItemBoxComponent({itemBox}: ItemBoxProps) {
     </div>)
 }
 
-export default ItemBoxComponent;
+export default InitialBox;
