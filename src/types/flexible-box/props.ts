@@ -9,3 +9,7 @@ export interface MovableBoxProps {
     itemBox: DraggedBox
     onResize: (box: ResizedItemBoxData) => void
 }
+
+export interface MovableBoxPreviewProps {
+    itemBox: DraggedBox
+}

@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Resizable } from 're-resizable'
 import { MovableBoxProps } from 'types/flexible-box/props'
 import { InitialBounds, ResizedItemBoxData } from 'types/flexible-box/movable-box'
+import { DragSourceMonitor, useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 
 function MovableBox({
         itemBox,
@@ -17,6 +19,21 @@ function MovableBox({
         maxWidth: undefined,
         maxHeight: undefined,
     } as InitialBounds);
+
+    const [{ isDragging }, drag, preview] = useDrag(
+        {
+          type: "movableBox",
+          item: itemBox,
+          collect: (monitor: DragSourceMonitor) => ({
+            isDragging: monitor.isDragging(),
+          }),
+        },
+        [itemBox]
+    );
+
+    useEffect(() => {
+        preview(getEmptyImage(), { captureDraggingState: true })
+      }, [preview])
 
     return (
         <Resizable
@@ -41,7 +58,8 @@ function MovableBox({
                 textAlign: "center",
                 justifyContent: "center",
                 border: `2px dashed ${itemBox.color}`,
-                cursor: "move"
+                cursor: "move",
+                opacity: isDragging ? 0 : 1
             }}
             onResizeStart={(_, direction, element) => {
                 const newTop = Number(element.style.top.slice(0, -1));
@@ -50,7 +68,6 @@ function MovableBox({
                 const newHeight = Number(element.style.height.slice(0, -1));
                 const newBottom = newTop + newHeight;
                 const newRight = newLeft + newWidth;
-                console.log(element.style, newTop, newLeft, newWidth, newHeight, newBottom, newRight)
                 let maxWidth = 0;
                 let maxHeight = 0;
                 switch (direction) {
@@ -197,7 +214,14 @@ function MovableBox({
                 });
             }}
             >
-                {itemBox.text}
+                <div
+                    ref={drag}
+                    style={{
+                        width: "100%",
+                        height: "100%"
+                    }}>
+                    {itemBox.text}
+                </div>
         </Resizable>
     )
 }

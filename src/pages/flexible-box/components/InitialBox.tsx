@@ -6,9 +6,9 @@ import { InitialBoxProps } from 'types/flexible-box/props'
 const { width, height } = getBoxSize()
 
 function InitialBox({itemBox}: InitialBoxProps) {
-    const [_, drag] = useDrag(
+    const [, drag] = useDrag(
         {
-          type: "box",
+          type: "initialBox",
           item: itemBox
         },
         [itemBox]
@@ -26,7 +26,8 @@ function InitialBox({itemBox}: InitialBoxProps) {
             width,
             height,
             marginRight: 8,
-            cursor: "pointer"
+            cursor: "pointer",
+            boxSizing: "border-box"
         }}>
             {itemBox.text}
     </div>)
