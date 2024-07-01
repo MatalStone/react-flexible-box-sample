@@ -46,8 +46,8 @@ function MovableBox({
                 width: `${itemBox.width}%`,
                 height: `${itemBox.height}%`,
             }}
-            minWidth={"2%"}
-            minHeight={"2%"}
+            minWidth={30}
+            minHeight={30}
             maxWidth={
                 initialBounds.maxWidth == null ? undefined : `${initialBounds.maxWidth}%`
             }
@@ -223,7 +223,12 @@ function MovableBox({
                     ref={drag}
                     style={{
                         width: "100%",
-                        height: "100%"
+                        height: "100%",
+                        overflow: "hidden",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center"
                     }}>
                     {itemBox.text}
                 </div>

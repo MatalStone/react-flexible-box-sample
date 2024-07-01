@@ -1,4 +1,3 @@
-import { DragSourceMonitor } from "react-dnd";
 import { DraggableBox, DraggedBox } from "./common";
 import { ResizedItemBoxData } from "./movable-box";
 
