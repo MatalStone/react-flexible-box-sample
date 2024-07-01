@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { indexGenerator } from 'pure-functions/common/util';
 import { getBoxSize } from 'pure-functions/flexible-box/constant';
 import { useDrop } from 'react-dnd';
@@ -10,16 +10,17 @@ const { width, height } = getBoxSize()
 
 function Container() {
     const [boxes, setBoxes] = useState([] as DraggedBox[])
-    const [rect, setRect] = useState({top:0,left:0})
+    const dropAreaRef = useRef<HTMLDivElement | null>(null)
 
-    const [collectedProps, drop] = useDrop(
+    const [, drop] = useDrop(
         () => ({
           accept: "box",
           drop(item: DraggableBox, monitor) {
             const clientOffset = monitor.getClientOffset();
-            if(clientOffset == null){
+            if(clientOffset == null || dropAreaRef.current == null){
                 return
             }
+            const rect = dropAreaRef.current.getBoundingClientRect()
             const box = {
                 serialNo: getSerialNo(),
                 text: item.text,
@@ -39,10 +40,7 @@ function Container() {
             if(el == null){
                 return
             }
-            const _rect = el.getBoundingClientRect()
-            if(rect.top !== _rect.top || rect.left !== _rect.left){
-                setRect({top:_rect.top,left:_rect.left})
-            }
+            dropAreaRef.current = el
             drop(el)
         }}
         style={{

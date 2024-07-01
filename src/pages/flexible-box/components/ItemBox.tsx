@@ -1,12 +1,12 @@
-import { getBoxSize } from 'pure-functions/flexible-box/constant';
 import React from 'react'
+import { getBoxSize } from 'pure-functions/flexible-box/constant';
 import { useDrag } from 'react-dnd';
 import { ItemBoxProps } from 'types/flexible-box'
 
 const { width, height } = getBoxSize()
 
 function ItemBoxComponent({itemBox}: ItemBoxProps) {
-    const [collected, drag, dragPreview] = useDrag(
+    const [, drag] = useDrag(
         {
           type: "box",
           item: itemBox
